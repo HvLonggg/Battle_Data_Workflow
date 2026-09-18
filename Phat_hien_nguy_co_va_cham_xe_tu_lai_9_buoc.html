@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phát hiện nguy cơ va chạm cho xe tự lái | Data Annotation Workflow</title>
+<style>
+@page { size: A4; margin: 15mm 15mm 16mm; }
+:root { --ink:#182230; --muted:#536173; --navy:#0b2942; --teal:#087f8c; --cyan:#dff4f3; --amber:#f1a93b; --red:#b9433f; --line:#d8e0e8; --paper:#f7fafc; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); font: 10.5pt/1.48 "Aptos", "Segoe UI", sans-serif; background:#e9eef3; }
+.page { width:180mm; min-height:266mm; margin:0 auto; padding:4mm 0; background:white; }
+.cover { min-height:258mm; display:flex; flex-direction:column; justify-content:space-between; padding:13mm 10mm 10mm; background:linear-gradient(140deg,#08253d 0%,#10485b 56%,#0b7f87 100%); color:white; position:relative; overflow:hidden; }
+.cover:after { content:""; position:absolute; width:110mm; height:110mm; border:1px solid rgba(255,255,255,.18); border-radius:50%; right:-38mm; top:28mm; box-shadow:0 0 0 14mm rgba(255,255,255,.05),0 0 0 29mm rgba(255,255,255,.04); }
+.kicker { letter-spacing:.13em; font-size:9pt; font-weight:700; opacity:.82; text-transform:uppercase; }
+h1 { font-size:32pt; line-height:1.05; margin:18mm 0 7mm; max-width:145mm; letter-spacing:0; }
+.cover h2 { font-size:16pt; font-weight:500; margin:0; max-width:130mm; color:#c5f3ed; }
+.cover-meta { border-top:1px solid rgba(255,255,255,.3); padding-top:6mm; display:flex; justify-content:space-between; gap:10mm; font-size:9.5pt; opacity:.9; }
+.section { page-break-before:always; padding:4mm 2mm 0; }
+.section:first-of-type { page-break-before:avoid; }
+.section:first-of-type { font-size:9.7pt; padding-top:1mm; }
+.section:first-of-type .flow { display:none; }
+.section:first-of-type .footer { margin-top:4mm; }
+h2 { color:var(--navy); font-size:21pt; line-height:1.15; margin:0 0 4mm; letter-spacing:0; }
+h3 { margin:0; color:var(--navy); font-size:13pt; letter-spacing:0; }
+h4 { margin:0 0 1mm; color:var(--teal); font-size:9pt; text-transform:uppercase; letter-spacing:.08em; }
+p { margin:1.5mm 0 3mm; }
+.lead { font-size:12pt; color:var(--muted); max-width:158mm; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:4mm; }
+.box { border:1px solid var(--line); border-radius:5px; padding:4mm; background:#fff; break-inside:avoid; }
+.box.soft { background:var(--paper); }
+.box.teal { background:var(--cyan); border-color:#a8dedd; }
+.box.warn { background:#fff6e5; border-color:#f0d19b; }
+.box.danger { background:#fff0ef; border-color:#e6b3b0; }
+.step-head { display:flex; align-items:flex-start; gap:4mm; border-bottom:2px solid var(--teal); padding-bottom:4mm; margin-bottom:4mm; }
+.num { flex:0 0 14mm; height:14mm; border-radius:50%; display:grid; place-items:center; background:var(--teal); color:white; font-size:17pt; font-weight:800; }
+.sub { color:var(--muted); font-size:10pt; margin-top:1mm; }
+ul { margin:1mm 0 0 5mm; padding-left:4mm; }
+li { margin:1.2mm 0; }
+.tag { display:inline-block; padding:1mm 2mm; margin:0 1mm 1mm 0; border-radius:3px; background:#edf2f6; font-size:9pt; font-weight:700; color:var(--navy); }
+.metric { font-size:17pt; font-weight:800; color:var(--teal); }
+.flow { display:grid; grid-template-columns:repeat(5,1fr); gap:2mm; margin:5mm 0; }
+.flow div { min-height:18mm; padding:2.5mm; background:var(--navy); color:white; font-size:8.5pt; border-radius:3px; text-align:center; display:flex; align-items:center; justify-content:center; }
+table { width:100%; border-collapse:collapse; font-size:9.3pt; margin-top:2mm; }
+th { background:var(--navy); color:white; text-align:left; }
+th,td { border:1px solid var(--line); padding:2.2mm; vertical-align:top; }
+.callout { border-left:4px solid var(--amber); padding:3mm 4mm; background:#fff8ea; margin:3mm 0; }
+.footer { border-top:1px solid var(--line); color:var(--muted); font-size:8.5pt; margin-top:7mm; padding-top:2mm; display:flex; justify-content:space-between; }
+.small { font-size:9pt; color:var(--muted); }
+.keep { break-inside:avoid; }
+@media print { body { background:white; } .page { width:auto; min-height:0; margin:0; padding:0; } .no-print { display:none; } }
+</style>
+</head>
+<body>
+<div class="page cover">
+  <div><div class="kicker">Data Annotation Workflow · Tài liệu thiết kế</div><h1>Phát hiện nguy cơ va chạm cho xe tự lái</h1><h2>Quy trình vòng đời 9 bước cho dữ liệu camera đa cảm biến và phát hành dataset có thể kiểm chứng</h2></div>
+  <div class="cover-meta"><div>VinUniversity · AICB-P2T4 · Ngày 06</div><div>Phiên bản 1.0 · 18/09/2026</div></div>
+</div>
+
+<section class="section">
+<h2>Phạm vi và thiết kế tổng thể</h2>
+<p class="lead">Mục tiêu của workflow là tạo dataset giúp hệ thống nhận biết vật thể, tình huống và mức nguy cơ va chạm đủ sớm để lập kế hoạch phanh, tránh hoặc chuyển quyền điều khiển. Dataset phải truy nguyên được từ cảnh quay gốc đến nhãn, người duyệt và phiên bản guideline.</p>
+<div class="grid">
+ <div class="box teal"><h4>Objective</h4><p><strong>Đầu vào:</strong> chuỗi camera trước/sau/bên, radar và metadata thời gian.</p><p><strong>Đầu ra:</strong> nhãn nguy cơ theo đối tượng và theo cảnh, phục vụ đánh giá perception và cảnh báo sớm trong điều kiện đô thị.</p></div>
+ <div class="box"><h4>Nguyên tắc an toàn</h4><ul><li>Ưu tiên giảm <strong>false negative</strong> ở tình huống có thể gây thương tích.</li><li>Nhãn không chắc chắn phải được <strong>abstain/escalate</strong>, không đoán.</li><li>Tách dữ liệu theo chuyến xe/đoạn đường, không tách ngẫu nhiên từng frame.</li></ul></div>
+</div>
+<h3 style="margin-top:6mm">Schema nhãn đề xuất</h3>
+<table><tr><th>Nhóm nhãn</th><th>Trường chính</th><th>Quy tắc</th></tr>
+<tr><td>Đối tượng</td><td>vehicle, pedestrian, cyclist, motorcycle, animal, obstacle, unknown</td><td>Bounding box hoặc segmentation; track_id ổn định trong clip.</td></tr>
+<tr><td>Trạng thái</td><td>lane_position, motion_state, occlusion, visibility</td><td>Gắn theo quan sát; không suy đoán ý định nếu không có bằng chứng.</td></tr>
+<tr><td>Nguy cơ</td><td>risk_level: none / watch / warning / critical</td><td>Dựa trên TTC, khoảng cách, hướng chuyển động và xung đột quỹ đạo.</td></tr>
+<tr><td>Sự kiện</td><td>near_miss, collision, emergency_brake, cut_in, crossing</td><td>Gắn interval start/end và confidence.</td></tr></table>
+<div class="flow"><div>1 Objective</div><div>2 Thu thập</div><div>3 Chuẩn bị</div><div>4 Guideline</div><div>5 Pilot</div><div>6 Gán nhãn</div><div>7 QA/QC</div><div>8 Release</div><div>9 Theo dõi</div></div>
+<div class="footer"><span>Phát hiện nguy cơ va chạm cho xe tự lái</span><span>01</span></div>
+</section>
+
+<!-- STEPS -->
+<section class="section"><div class="step-head"><div class="num">1</div><div><h2>Mục tiêu & Phạm vi</h2><div class="sub">Define Data Objective & Annotation Scope</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Nhận yêu cầu an toàn, ODD (đô thị, cao tốc, ngày/đêm), cảm biến và hành động mà model hỗ trợ.</p><p><strong>Chủ trì:</strong> safety owner / data owner; có kỹ sư perception và người duyệt an toàn.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Viết objective định lượng: phát hiện nguy cơ tối thiểu trước <strong>2 giây</strong> trong ODD đã chọn.</li><li>Chốt class, đơn vị gán (frame/clip/object) và ngoài phạm vi.</li><li>Quy định ưu tiên recall cho critical; không dùng nhãn “nguy hiểm” theo cảm tính.</li><li>Đặt pilot agreement khởi điểm ≥90%, QC recall critical ≥98%; hiệu chỉnh sau pilot.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> Objective & Scope v1.0, ODD card, label taxonomy, risk policy.</p><p><strong>Gate:</strong> đọc objective là suy ra được cần nhãn gì, dữ liệu nào, ngưỡng nào và ai được phép dùng dataset.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>“Thu video để train xe tự lái” không phải objective. Nếu không nói rõ nguy cơ nào, trước bao lâu và trong ODD nào, mọi bước sau sẽ đo sai bài toán.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">2</div><div><h2>Thu thập & Chọn lọc</h2><div class="sub">Data Collection / Data Selection</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Objective & Scope, danh sách tuyến đường, xe, cảm biến, quyền sử dụng và kế hoạch an toàn khi thu.</p><p><strong>Chủ trì:</strong> data collection lead; legal/privacy owner chịu trách nhiệm provenance.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Chia quota theo thời tiết, ánh sáng, mật độ, loại đường, khu vực và lớp hiếm.</li><li>Ghi mỗi clip: clip_id, trip_id, sensor_set, timestamp, GPS đã làm mờ, ODD, nguồn, consent.</li><li>Chủ động lấy near-miss, cut-in, người đi bộ khuất, xe máy và vật cản bất thường.</li><li>Video lỗi, lệch timestamp hoặc thiếu quyền đưa vào quarantine, không xoá im lặng.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> raw sensor bundle + data ledger + privacy log + quarantine list.</p><p><strong>Gate:</strong> số lượng theo quota cộng đúng; mọi clip có provenance, đồng bộ cảm biến và quyền sử dụng.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>10.000 frame liên tiếp từ một chuyến xe không tương đương 10.000 tình huống độc lập. Group key phải là trip/route segment.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">3</div><div><h2>Chuẩn bị & Tiền xử lý</h2><div class="sub">Data Preparation & Preprocessing</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Sensor bundle, ledger và tiêu chí ODD từ bước 2.</p><p><strong>Chủ trì:</strong> data analyst / ML engineer.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Kiểm tra schema, frame rate, timestamp, calibration, mất frame và lệch camera-radar.</li><li>EDA theo risk_level, object class, ODD và nguồn; xem bằng mắt các clip khó.</li><li>Phát hiện duplicate/near-duplicate nhưng chỉ loại sau khi review.</li><li>Che mặt, biển số; chuẩn hoá kích thước; lưu hash và mọi biến đổi.</li><li>Chia train/validation/test theo trip_id hoặc route segment; không để cùng cảnh lọt hai split.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> eligible manifest, EDA report, calibration report, transform ledger, fixed split.</p><p><strong>Gate:</strong> không có group trùng split; timestamp và calibration đạt kiểm tra; mọi thay đổi tái hiện được.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>Random split theo frame làm test “nhìn thấy” cùng một đoạn đường và cho điểm cao giả; đây là leakage nguy hiểm nhất của dữ liệu video.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">4</div><div><h2>Viết Guideline</h2><div class="sub">Annotation Guideline</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Objective, taxonomy, eligible split và các ca khó từ EDA.</p><p><strong>Chủ trì:</strong> safety/perception SME; viết để annotator mới vẫn làm được.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Định nghĩa object bằng dấu hiệu quan sát: hình dạng, vị trí, chuyển động, không bằng kết luận.</li><li>Quy định box/segmentation, track_id, frame interval, occlusion và visibility.</li><li>Định nghĩa risk bằng thứ tự ưu tiên: collision/near-miss, TTC, khoảng cách, hướng và hành vi cắt vào.</li><li>Nêu ví dụ đúng/sai, edge cases, abstain khi không đủ quan sát, escalate khi critical.</li><li>Schema trong công cụ phải khớp từng chữ với guideline; mọi thay đổi tăng version.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> Guideline v1.0 + schema config + decision log + reference set.</p><p><strong>Gate:</strong> người ngoài dự án gán được bộ mẫu chuẩn; hai annotator hiểu giống nhau về ca critical.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>“Gán nguy hiểm nếu nhìn thấy có vẻ nguy hiểm” không thể kiểm tra. Guideline phải mô tả điều quan sát được và đường đi quyết định.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">5</div><div><h2>Pilot</h2><div class="sub">Pilot Annotation</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Guideline nháp, schema và 30–50 clip đại diện: dễ, khó, đêm, mưa, che khuất, lớp hiếm.</p><p><strong>Chủ trì:</strong> đúng annotator sẽ làm batch thật; reviewer độc lập.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Hai người gán độc lập, không xem kết quả của nhau.</li><li>Đo agreement riêng cho object, track, risk_level và event interval.</li><li>Nhóm bất đồng theo nguyên nhân: box, timestamp, occlusion, TTC, định nghĩa class.</li><li>Chạy một vòng adjudication; sửa guideline và tạo reference set cho QC.</li><li>Đặt “stop rule” nếu critical agreement thấp hoặc lỗi hệ thống lặp lại.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> pilot report, disagreement matrix, Guideline v1.1, reference set.</p><p><strong>Gate:</strong> đạt ngưỡng đã đặt; mọi loại bất đồng lặp lại đã thành quy tắc hoặc bị đánh dấu escalate.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>Pilot chỉ lấy cảnh đẹp và ban ngày. Agreement 98% ở mẫu dễ không dự đoán được batch đêm, mưa hay người đi bộ bị che.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">6</div><div><h2>Gán nhãn hàng loạt</h2><div class="sub">Annotation</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Guideline đã pilot, schema, batch chia theo trip/route group, reference set và phân vai.</p><p><strong>Vai:</strong> annotator · reviewer · adjudicator · data owner.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Gán object và track trước, sau đó gán risk/event trên clip; giữ liên tục theo thời gian.</li><li>Annotator không review chính batch của mình; mọi critical hoặc confidence thấp phải escalate.</li><li>Nếu dùng prelabel: người xem từng đề xuất, sửa, rồi ký; không mặc nhiên chấp nhận AI.</li><li>Checklist trước submit: đủ frame, box hợp lệ, track không nhảy, risk có bằng chứng, metadata đầy đủ.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> candidate labels, escalation queue, annotator log, guideline version và tool version.</p><p><strong>Gate:</strong> batch đủ schema; reviewer có quyền từ chối nếu thiếu field, sai version hoặc track/risk không nhất quán.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>Hai người cùng thấy prelabel AI và cùng chấp nhận lỗi. Agreement cao không chứng minh nhãn đúng nếu nguồn lỗi chung là mô hình.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">7</div><div><h2>QA / QC</h2><div class="sub">Quality Assurance / Quality Control</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Candidate labels, reference set, fixed split, gate và risk queue.</p><p><strong>Chủ trì:</strong> reviewer độc lập; safety owner adjudicate critical.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Random audit có seed để ước lượng chất lượng cả batch; risk queue dùng riêng để tìm lỗi nguy hiểm.</li><li>Báo cáo mẫu số riêng cho box, track, class, risk và event; không gộp khác mẫu số.</li><li>Đo micro, macro, worst-class; ưu tiên recall critical và consistency theo clip.</li><li>Với lỗi lặp: tìm nguyên nhân, sửa rule, gán lại đúng group ảnh rồi kiểm chứng.</li><li>Kiểm tra cả dữ liệu: thiếu đêm/mưa, lệch sensor, duplicate và drift nguồn.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> QC report, audit manifest/seed, confusion matrix, issue log, corrective action.</p><p><strong>Gate:</strong> batch đạt ngưỡng; nếu fail phải có phạm vi rework, người phụ trách và điều kiện pass lại.</p></div><div class="box danger"><h4>Bẫy thường gặp</h4><p>Lấy tỉ lệ lỗi trong risk queue rồi báo như tỉ lệ lỗi cả batch. Mẫu có chủ đích để tìm lỗi không thể dùng làm ước lượng đại diện.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">8</div><div><h2>Phát hành</h2><div class="sub">Release</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Batch đã qua QC, guideline, split, QC report, limitations và approval.</p><p><strong>Chủ trì:</strong> một data owner ký tên; release manager đóng gói.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Đóng gói: data + labels, manifest/split, guideline, QC report, dataset card.</li><li>Gắn version, checksum, source commit, tool version, labeler/reviewer log và changelog.</li><li>Dataset card phải nêu ODD, intended use, không dùng cho mục đích nào, bias và known limitations.</li><li>Trả lời trước khi ký: dữ liệu từ đâu, nhãn gì, split ra sao, chất lượng bao nhiêu, hạn chế gì, ai chịu trách nhiệm.</li><li>Thiếu bằng chứng thì HOLD, không phát hành “trước rồi bổ sung sau”.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> CollisionRisk-Dataset v1.0 release packet có manifest và chữ ký.</p><p><strong>Gate:</strong> packet tái tạo được; sáu câu hỏi trả lời bằng tài liệu; quyền truy cập đúng mục đích.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>Đổi guideline sau khi gán nhưng không đổi version. Khi đó không ai biết nhãn nào được tạo theo rule nào.</p></div></div></section>
+
+<section class="section"><div class="step-head"><div class="num">9</div><div><h2>Theo dõi & Phản hồi</h2><div class="sub">Monitoring, Error Analysis & Feedback</div></div></div>
+<div class="grid"><div class="box"><h4>Nhận gì · Ai làm</h4><p>Release packet, log vận hành, hard cases, incident/near-miss và phản hồi từ model evaluation.</p><p><strong>Chủ trì:</strong> operations + ML/safety owner.</p></div><div class="box"><h4>Làm gì</h4><ul><li>Theo dõi drift theo ánh sáng, thời tiết, khu vực, sensor, object class và risk level.</li><li>Đo miss rate, false alarm, time-to-detection, recall critical và phân bố confidence.</li><li>Phân tích lỗi để tách nguyên nhân: model, guideline, thiếu dữ liệu, calibration hay objective.</li><li>Mỗi phát hiện trỏ về một bước cụ thể, có owner, deadline và tiêu chí đóng.</li><li>Hard cases quay lại bước 1 hoặc 2; rule mới quay lại bước 4–5; lỗi nhãn quay lại bước 6–7.</li></ul></div><div class="box teal"><h4>Giao ra artifact · Cổng</h4><p><strong>Artifact:</strong> monitoring report, error taxonomy, feedback backlog, đề xuất v1.1.</p><p><strong>Gate:</strong> mỗi phát hiện có đường quay lại lifecycle, owner và bằng chứng sau khi sửa.</p></div><div class="box warn"><h4>Bẫy thường gặp</h4><p>Chỉ nhìn một accuracy tổng. Với xe tự lái, cột phân tích theo lớp, điều kiện và thời gian cảnh báo mới cho biết lỗi nào có ý nghĩa an toàn.</p></div></div></section>
+
+<section class="section">
+<h2>Checklist trước khi trình bày / phát hành</h2><p class="lead">Một dataset tốt không chỉ có nhiều nhãn; nó phải trả lời được nhãn đến từ đâu, vì sao đúng và khi nào không nên tin.</p>
+<table><tr><th>Kiểm tra</th><th>Đạt khi</th></tr>
+<tr><td>Objective</td><td>Gắn với hành động an toàn, ODD, thời gian cảnh báo và chi phí FN/FP.</td></tr>
+<tr><td>Coverage</td><td>Có quota và bằng chứng cho đêm, mưa, che khuất, near-miss, lớp hiếm, nhiều tuyến.</td></tr>
+<tr><td>Leakage</td><td>Split theo trip/route group; không có cùng cảnh hoặc near-duplicate qua các split.</td></tr>
+<tr><td>Guideline</td><td>Có version, ví dụ biên, abstain/escalate và schema khớp công cụ.</td></tr>
+<tr><td>QC</td><td>Có seed, mẫu số, worst-class, recall critical và corrective action.</td></tr>
+<tr><td>Release</td><td>Có checksum, manifest, dataset card, limitation, log và chữ ký data owner.</td></tr>
+<tr><td>Feedback</td><td>Có chỉ số drift, error taxonomy và đường quay lại bước cụ thể.</td></tr></table>
+<div class="callout"><strong>Kết luận:</strong> Quy trình 9 bước biến dữ liệu nguy cơ va chạm thành một sản phẩm có phiên bản, có bằng chứng và có thể cải tiến. Mỗi cổng là một quyết định an toàn; không có artifact thì chưa được coi là hoàn thành.</div>
+<div class="footer"><span>Collision Risk Annotation Workflow · v1.0</span><span>10</span></div>
+</section>
+</body>
+</html>
